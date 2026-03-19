@@ -8,7 +8,11 @@ dependencies = []
 
 [project.scripts]
 type-identification = "type_identification.cli:main"
-pytest = "type_identification.pytest_shim:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
 
 [build-system]
 requires = ["setuptools>=61"]
@@ -23,3 +27,6 @@ where = ["src"]
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
+
+[tool.uv]
+default-groups = ["dev"]

@@ -45,7 +45,7 @@
 ## セットアップ
 
 ```bash
-uv sync
+uv sync --dev
 ```
 
 ## 使い方
