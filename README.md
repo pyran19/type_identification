@@ -4,7 +4,7 @@
 
 ## 問題設定
 
-- 防御側の候補は18種類の単タイプです。
+- 防御側の候補は18種類の単タイプに加えて、全攻撃タイプに対して等倍となる「タイプなし (`typeless`)」です。
 - こちらは任意のタイプの攻撃技を選べます。
 - 各攻撃タイプに対して、防御側が受ける相性倍率 (`0`, `0.5`, `1`, `2`) を観測できるとします。
 - この倍率の並びだけで、防御側のタイプを一意に特定したいです。
@@ -16,7 +16,7 @@
 
 1. タイプ相性表をコード化する。
 2. 攻撃タイプ集合ごとの倍率シグネチャを計算する。
-3. 18タイプ全部を一意に区別できる最小攻撃タイプ数を全探索で求める。
+3. 18種類の通常タイプと `typeless` を一意に区別できる最小攻撃タイプ数を全探索で求める。
 4. その最小値を達成する攻撃タイプ集合を列挙する。
 
 詳細な実装方針は `docs/implementation_plan.md` を参照してください。
@@ -28,19 +28,16 @@
 各攻撃タイプ集合については、全防御タイプに対して以下を行います。
 
 - 各防御タイプの倍率列（シグネチャ）を作る。
-- 18タイプすべてのシグネチャが互いに異なれば、その攻撃タイプ集合は識別可能と判定する。
+- 19個の候補すべてのシグネチャが互いに異なれば、その攻撃タイプ集合は識別可能と判定する。
 - 最初に識別可能になった攻撃タイプ数を最小値として採用する。
 
 ## 現在の探索結果
 
-現状の実装では、18種類すべての単タイプを一意に識別するには**4種類**の攻撃タイプが必要です。
+現状の実装では、18種類の通常単タイプと `typeless` を一意に識別するには**4種類**の攻撃タイプが必要です。
 
-最小個数を達成する攻撃タイプ集合は次の4通りです。
+最小個数を達成する攻撃タイプ集合は次の1通りです。
 
 - `fire, electric, fighting, psychic`
-- `grass, ice, fighting, bug`
-- `grass, fighting, bug, rock`
-- `ice, fighting, poison, bug`
 
 ## セットアップ
 
@@ -59,13 +56,10 @@ uv run type-identification
 出力例:
 
 ```text
-Target defending types: normal, fire, water, electric, grass, ice, fighting, poison, ground, flying, psychic, bug, rock, ghost, dragon, dark, steel, fairy
+Target defending types: normal, fire, water, electric, grass, ice, fighting, poison, ground, flying, psychic, bug, rock, ghost, dragon, dark, steel, fairy, typeless
 Minimum required attack types: 4
 Attack type sets that achieve the minimum:
 - fire, electric, fighting, psychic
-- grass, ice, fighting, bug
-- grass, fighting, bug, rock
-- ice, fighting, poison, bug
 ```
 
 ## テスト

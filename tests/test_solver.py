@@ -1,4 +1,6 @@
 from type_identification.solver import (
+    ATTACK_TYPE_NAMES,
+    TYPELESS_DEFENDING_TYPE,
     build_signature_map,
     find_minimum_attack_type_sets,
     is_distinguishable,
@@ -28,13 +30,21 @@ def test_signature_map_matches_expected_pattern() -> None:
     assert signatures["grass"] == (2.0, 0.5)
 
 
+def test_typeless_defender_is_all_neutral() -> None:
+    signatures = build_signature_map(("normal", "fire", "water", "electric"))
+
+    assert signatures[TYPELESS_DEFENDING_TYPE] == (1.0, 1.0, 1.0, 1.0)
+
+
 def test_full_type_search_returns_stable_minimum() -> None:
     minimum_count, attack_sets = find_minimum_attack_type_sets()
 
     assert minimum_count == 4
-    assert attack_sets == [
-        ("fire", "electric", "fighting", "psychic"),
-        ("grass", "ice", "fighting", "bug"),
-        ("grass", "fighting", "bug", "rock"),
-        ("ice", "fighting", "poison", "bug"),
-    ]
+    assert attack_sets == [("fire", "electric", "fighting", "psychic")]
+
+
+def test_default_search_uses_only_standard_attack_types() -> None:
+    minimum_count, attack_sets = find_minimum_attack_type_sets()
+
+    assert minimum_count <= len(ATTACK_TYPE_NAMES)
+    assert all(set(attack_set).issubset(set(ATTACK_TYPE_NAMES)) for attack_set in attack_sets)

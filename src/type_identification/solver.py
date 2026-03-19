@@ -3,7 +3,7 @@ from __future__ import annotations
 from itertools import combinations
 from typing import Iterable
 
-TYPE_NAMES: tuple[str, ...] = (
+ATTACK_TYPE_NAMES: tuple[str, ...] = (
     "normal",
     "fire",
     "water",
@@ -23,6 +23,11 @@ TYPE_NAMES: tuple[str, ...] = (
     "steel",
     "fairy",
 )
+
+TYPELESS_DEFENDING_TYPE = "typeless"
+
+DEFENDING_TYPE_NAMES: tuple[str, ...] = ATTACK_TYPE_NAMES + (TYPELESS_DEFENDING_TYPE,)
+TYPE_NAMES: tuple[str, ...] = DEFENDING_TYPE_NAMES
 
 # attack_type -> defending_type -> multiplier
 TYPE_CHART: dict[str, dict[str, float]] = {
@@ -184,14 +189,13 @@ def build_signature_map(attack_types: Iterable[str]) -> dict[str, tuple[float, .
         defending_type: tuple(
             damage_multiplier(attack_type, defending_type) for attack_type in chosen_types
         )
-        for defending_type in TYPE_NAMES
+        for defending_type in DEFENDING_TYPE_NAMES
     }
-
 
 
 def is_distinguishable(attack_types: Iterable[str], target_types: Iterable[str] | None = None) -> bool:
     chosen_types = tuple(attack_types)
-    candidates = tuple(target_types) if target_types is not None else TYPE_NAMES
+    candidates = tuple(target_types) if target_types is not None else DEFENDING_TYPE_NAMES
     signatures = {
         defending_type: tuple(
             damage_multiplier(attack_type, defending_type) for attack_type in chosen_types
@@ -201,13 +205,14 @@ def is_distinguishable(attack_types: Iterable[str], target_types: Iterable[str] 
     return len(set(signatures.values())) == len(candidates)
 
 
-
 def find_minimum_attack_type_sets(
     candidate_attack_types: Iterable[str] | None = None,
     target_types: Iterable[str] | None = None,
 ) -> tuple[int, list[tuple[str, ...]]]:
-    attack_pool = tuple(candidate_attack_types) if candidate_attack_types is not None else TYPE_NAMES
-    defending_pool = tuple(target_types) if target_types is not None else TYPE_NAMES
+    attack_pool = (
+        tuple(candidate_attack_types) if candidate_attack_types is not None else ATTACK_TYPE_NAMES
+    )
+    defending_pool = tuple(target_types) if target_types is not None else DEFENDING_TYPE_NAMES
 
     for attack_count in range(1, len(attack_pool) + 1):
         successful_sets = [
