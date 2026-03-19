@@ -1,0 +1,25 @@
+[project]
+name = "type-identification"
+version = "0.1.0"
+description = "Search the minimum number of attack types required to identify a defending Pokemon type from damage multipliers."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+type-identification = "type_identification.cli:main"
+pytest = "type_identification.pytest_shim:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
